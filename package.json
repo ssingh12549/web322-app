@@ -1,7 +1,6 @@
 {
-  "name": "weba3-sheetal-singh",
+  "name": "weba4-sheetal-singh",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,5 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssingh12549/web322Assignment3.gi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ssingh12549/web322Assignment3.gi/issues"
+  },
+  "homepage": "https://github.com/ssingh12549/web322Assignment3.gi#readme",
+  "description": ""
 }
