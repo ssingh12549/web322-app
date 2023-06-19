@@ -1,68 +1,78 @@
-/**********************************************************************************
-WEB322 – Assignment 1
-I declare that this assignment is my own work in accordance with Seneca Academic Policy.
-No part of this assignment has been copied manually or electronically from any other source
-(including web sites) or distributed to other students.
-** Name: _____sheetal singh_________________
-Student ID: _____167431212_________
-Date: _____28/05/2023___________
-** Online (Cyclic) URL: _______________________________________________________
-*********************************************************************************/
+/*********************************************************************************
+ * WEB322 – Assignment 3
+ * I declare that this assignment is my own work in accordance with Seneca Academic Policy.
+ * No part of this assignment has been copied manually or electronically from any other source
+ * (including web sites) or distributed to other students.
+ *
+ * Name: Sheetal singh Student ID: 167431212  Date: 19/06/2023
+ *
+ *
+ ********************************************************************************/
 
-const express = require("express");
-const path = require("path");
-const data = require("./modules/officeData.js");
+var express = require("express");
+var app = express();
+var HTTP_PORT = process.env.PORT || 8080;
+var path = require("path");
 
-const app = express();
-const HTTP_PORT = process.env.PORT || 8080;
+const {
+  initialize,
+  getPartTimers,
+  getEmployeeByNum,
+} = require("./modules/officeData");
+
+// setup a 'route' to listen on the default url path
 
 app.use(express.static("public"));
 
-app.get("/", (req,res) => {
+app.get("/PartTimer", (req, res) => {
+  getPartTimers()
+    .then((value) => res.send(JSON.stringify(value)))
+    .catch((error) => res.send(JSON.stringify({ message: error })));
+});
+app.get("/employee/:num", (req, res) => {
+  getEmployeeByNum(Number(req.params.num))
+    .then((value) => res.send(JSON.stringify(value)))
+    .catch((error) => res.send(JSON.stringify({ message: error })));
+});
+app.get("/PartTimer", (req, res) => {
+  getPartTimers()
+    .then((value) => res.send(JSON.stringify(value)))
+    .catch((error) => res.send(JSON.stringify({ message: error })));
+});
+
+app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "/views/home.html"));
 });
-
-app.get("/audio", (req,res) => {
+app.get("/audio", function (req, res) {
   res.sendFile(path.join(__dirname, "/views/audio.html"));
 });
-
-app.get("/video", (req, res) => {
+app.get("/video", function (req, res) {
   res.sendFile(path.join(__dirname, "/views/video.html"));
 });
-
-app.get("/list", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/list.html"));
-});
-
-app.get("/table", (req, res) => {
+app.get("/table", function (req, res) {
   res.sendFile(path.join(__dirname, "/views/table.html"));
 });
-
-app.get("/PartTimer", (req,res) => {
-  data.getPartTimers().then((data)=>{
-    res.json(data);
-  });
+app.get("/list", function (req, res) {
+  res.sendFile(path.join(__dirname, "/views/list.html"));
+});
+app.get("/storefront", function (req, res) {
+  res.sendFile(path.join(__dirname, "/views/storefront.html"));
 });
 
-app.get("/employee/:employeeNum", (req, res) => {
-  data.getEmployeeByNum(req.param.employeeNum).then((data) => {
-    res.json(data);
-  }).catch((err) => {
-    res.json({message:"no results"});
-  });
-});
-
-
-
-app.use((req,res)=>{
+app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
 
+app.use(express.urlencoded({ extended: true }));
 
-data.initialize().then(function(){
-  app.listen(HTTP_PORT, function(){
-    console.log("app listening on: " + HTTP_PORT)
-  });
-}).catch(function(err){
-  console.log("unable to start server: " + err);
-});
+
+// setup http server to listen on HTTP_PORT
+
+
+initialize()
+  .then(() => {
+    app.listen(HTTP_PORT, () => {
+      console.log("server listening on port: " + HTTP_PORT);
+    });
+  })
+  .catch((error) => console.log(error));
