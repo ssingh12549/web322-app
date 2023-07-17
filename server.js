@@ -1,78 +1,69 @@
 /*********************************************************************************
- * WEB322 – Assignment 4
+ * WEB322 – Assignment 5
  * I declare that this assignment is my own work in accordance with Seneca Academic Policy.
  * No part of this assignment has been copied manually or electronically from any other source
  * (including web sites) or distributed to other students.
  *
- * Name: Sheetal singh Student ID: 167431212  Date: 19/06/2023
+ * Name: Sheetal singh Student ID: 167431212  Date: 16/07/2023
  *
  *
  ********************************************************************************/
+const express = require("express");
+const path = require("path");
+const exphbs = require("express-handlebars");
+const data = require("./modules/officeData.js");
 
-var express = require("express");
-var app = express();
-var HTTP_PORT = process.env.PORT || 8080;
-var path = require("path");
+const app = express();
 
-const {
-  initialize,
-  getPartTimers,
-  getEmployeeByNum,
-} = require("./modules/officeData");
+const HTTP_PORT = process.env.PORT || 8080;
 
-// setup a 'route' to listen on the default url path
+app.engine("handlebars", exphbs());
+app.set("view engine", "handlebars");
 
-app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/PartTimer", (req, res) => {
-  getPartTimers()
-    .then((value) => res.send(JSON.stringify(value)))
-    .catch((error) => res.send(JSON.stringify({ message: error })));
-});
-app.get("/employee/:num", (req, res) => {
-  getEmployeeByNum(Number(req.params.num))
-    .then((value) => res.send(JSON.stringify(value)))
-    .catch((error) => res.send(JSON.stringify({ message: error })));
-});
-app.get("/PartTimer", (req, res) => {
-  getPartTimers()
-    .then((value) => res.send(JSON.stringify(value)))
-    .catch((error) => res.send(JSON.stringify({ message: error })));
+app.get("/employees", (req, res) => {
+  data.getAllEmployees()
+    .then((data) => {
+      if (data.length === 0) {
+        res.render("employees", { message: "no results" });
+      } else {
+        res.render("employees", { employees: data });
+      }
+    })
+    .catch(() => {
+      res.render("employees", { message: "no results" });
+    });
 });
 
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "/views/home.html"));
+app.get("/employees/add", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "addEmployee.html"));
 });
-app.get("/audio", function (req, res) {
-  res.sendFile(path.join(__dirname, "/views/audio.html"));
+
+app.post("/employees/add", (req, res) => {
+  data.addEmployee(req.body)
+    .then(() => {
+      res.redirect("/employees");
+    })
+    .catch(() => {
+      res.redirect("/employees");
+    });
 });
-app.get("/video", function (req, res) {
-  res.sendFile(path.join(__dirname, "/views/video.html"));
-});
-app.get("/table", function (req, res) {
-  res.sendFile(path.join(__dirname, "/views/table.html"));
-});
-app.get("/list", function (req, res) {
-  res.sendFile(path.join(__dirname, "/views/list.html"));
-});
-app.get("/storefront", function (req, res) {
-  res.sendFile(path.join(__dirname, "/views/storefront.html"));
+
+app.get("/description", (req, res) => {
+  res.render("description");
 });
 
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
 
-app.use(express.urlencoded({ extended: true }));
-
-
-// setup http server to listen on HTTP_PORT
-
-
-initialize()
-  .then(() => {
-    app.listen(HTTP_PORT, () => {
-      console.log("server listening on port: " + HTTP_PORT);
+data.initialize()
+  .then(function () {
+    app.listen(HTTP_PORT, function () {
+      console.log("app listening on: " + HTTP_PORT);
     });
   })
-  .catch((error) => console.log(error));
+  .catch(function (err) {
+    console.log("unable to start server: " + err);
+  });
