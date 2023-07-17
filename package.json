@@ -1,7 +1,7 @@
 {
-  "name": "weba4-sheetal-singh",
+  "name": "a5-modified---upload",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -11,13 +11,5 @@
   "dependencies": {
     "express": "^4.18.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ssingh12549/web322Assignment3.gi.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ssingh12549/web322Assignment3.gi/issues"
-  },
-  "homepage": "https://github.com/ssingh12549/web322Assignment3.gi#readme",
   "description": ""
 }
